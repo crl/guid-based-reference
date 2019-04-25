@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -33,8 +31,8 @@ public class GuidComponent : MonoBehaviour, ISerializationCallbackReceiver
 #if UNITY_EDITOR
             // If we are creating a new GUID for a prefab instance of a prefab, but we have somehow lost our prefab connection
             // force a save of the modified prefab instance properties
-            PrefabType prefabType = PrefabUtility.GetPrefabType(this);
-            if (prefabType == PrefabType.PrefabInstance)
+            PrefabAssetType prefabType = PrefabUtility.GetPrefabAssetType(this);
+            if (prefabType == PrefabAssetType.NotAPrefab && EditorUtility.IsPersistent(this)==false)
             {
                 PrefabUtility.RecordPrefabInstancePropertyModifications(this);
             }
@@ -65,8 +63,8 @@ public class GuidComponent : MonoBehaviour, ISerializationCallbackReceiver
 #if UNITY_EDITOR
         // This lets us detect if we are a prefab instance or a prefab asset.
         // A prefab asset cannot contain a GUID since it would then be duplicated when instanced.
-        PrefabType prefabType = PrefabUtility.GetPrefabType(this);
-        if (prefabType == PrefabType.Prefab || prefabType == PrefabType.ModelPrefab)
+        PrefabAssetType prefabType = PrefabUtility.GetPrefabAssetType(this);
+        if (prefabType != PrefabAssetType.NotAPrefab)
         {
             serializedGuid = new byte[0];
             guid = System.Guid.Empty;
@@ -100,8 +98,8 @@ public class GuidComponent : MonoBehaviour, ISerializationCallbackReceiver
 #if UNITY_EDITOR
         // similar to on Serialize, but gets called on Copying a Component or Applying a Prefab
         // at a time that lets us detect what we are
-        PrefabType prefabType = PrefabUtility.GetPrefabType(this);
-        if (prefabType == PrefabType.Prefab || prefabType == PrefabType.ModelPrefab)
+        PrefabAssetType prefabType = PrefabUtility.GetPrefabAssetType(this);
+        if (prefabType != PrefabAssetType.NotAPrefab)
         {
             serializedGuid = null;
             guid = System.Guid.Empty;

@@ -1,7 +1,6 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 // Class to handle registering and accessing objects by GUID
 public class GuidManager
@@ -53,7 +52,7 @@ public class GuidManager
         return Instance.InternalAdd(guidComponent);
     }
 
-    public static void Remove(System.Guid guid)
+    public static void Remove(Guid guid)
     {
         if (Instance == null)
         {
@@ -62,7 +61,7 @@ public class GuidManager
 
         Instance.InternalRemove(guid);
     }
-    public static GameObject ResolveGuid(System.Guid guid, Action<GameObject> onAddCallback, Action onRemoveCallback)
+    public static GameObject ResolveGuid(Guid guid, Action<GameObject> onAddCallback, Action onRemoveCallback)
     {
         if (Instance == null)
         {
@@ -72,7 +71,7 @@ public class GuidManager
         return Instance.ResolveGuidInternal(guid, onAddCallback, onRemoveCallback);
     }
 
-    public static GameObject ResolveGuid(System.Guid guid, Action onDestroyCallback)
+    public static GameObject ResolveGuid(Guid guid, Action onDestroyCallback)
     {
         if (Instance == null)
         {
@@ -82,7 +81,7 @@ public class GuidManager
         return Instance.ResolveGuidInternal(guid, null, onDestroyCallback);
     }
 
-    public static GameObject ResolveGuid(System.Guid guid)
+    public static GameObject ResolveGuid(Guid guid)
     {
         if (Instance == null)
         {
@@ -92,11 +91,11 @@ public class GuidManager
     }
         
     // instance data
-    private Dictionary<System.Guid, GuidInfo> guidToObjectMap;
+    private Dictionary<Guid, GuidInfo> guidToObjectMap;
 
     private GuidManager()
     {
-        guidToObjectMap = new Dictionary<System.Guid, GuidInfo>();
+        guidToObjectMap = new Dictionary<Guid, GuidInfo>();
     }
 
     private bool InternalAdd(GuidComponent guidComponent)
@@ -135,7 +134,7 @@ public class GuidManager
         return true;
     }
 
-    private void InternalRemove(System.Guid guid)
+    private void InternalRemove(Guid guid)
     {
         GuidInfo info;
         if (guidToObjectMap.TryGetValue(guid, out info))
@@ -150,7 +149,7 @@ public class GuidManager
     // nice easy api to find a GUID, and if it works, register an on destroy callback
     // this should be used to register functions to cleanup any data you cache on finding
     // your target. Otherwise, you might keep components in memory by referencing them
-    private GameObject ResolveGuidInternal(System.Guid guid, Action<GameObject> onAddCallback, Action onRemoveCallback)
+    private GameObject ResolveGuidInternal(Guid guid, Action<GameObject> onAddCallback, Action onRemoveCallback)
     {
         GuidInfo info;
         if (guidToObjectMap.TryGetValue(guid, out info))
